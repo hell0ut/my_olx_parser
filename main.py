@@ -3,19 +3,20 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 
+
 def write_csv(result):
     with open('file.csv', 'w') as f:
         writer = csv.writer(f)
         writer.writerow(['ser=,'])
         for item in result:
-            writer.writerow( (item['name'],
-                              item['price'],
-                              item['description'],
-                              item['author'],
-                              item['business_or_private'],
-                              item['phone_number'],
-                              item['url']
-                              ))
+            writer.writerow((item['name'],
+                             item['price'],
+                             item['description'],
+                             item['author'],
+                             item['business_or_private'],
+                             item['phone_number'],
+                             item['url']
+                             ))
 
 
 def clean(text):
@@ -37,28 +38,14 @@ def get_item_data(item_url):
     author = clean(soup.find('h4', {'class': 'css-1rbjef7-Text eu5v0x0'}).text)
     business_or_private = clean(soup.find('p', {'class': 'css-xl6fe0-Text eu5v0x0'}).text)
     phone_number = get_phone()
-    item = {'name': name, 'price': price, 'description': description, 'author': author, 'business_or_private': business_or_private, 'phone_number': phone_number, 'url': item_url}
+    item = {'name': name, 'price': price, 'description': description, 'author': author,
+            'business_or_private': business_or_private, 'phone_number': phone_number, 'url': item_url}
     result.append(item)
-    if job.print_items_data_to_terminale:
+    if job.print_items_data_to_terminal:
         print(item_url)
         print(name, price, author, business_or_private)
         print(description)
     return result
-
-
-# def get_list_data(page_url):
-#     r = requests.get(page_url)
-#     soup = BeautifulSoup(r.content)
-#     table = soup.find('table', {'id': 'offers_table'})
-#     rows = table.find_all('tr', {'class': 'wrap'})
-#     counter = 1
-#     result = []
-#     for row in rows:
-#         print('Parsing item ', str(counter), ' of ', str(len(rows)))
-#         item_url = row.find('h3').find('a').get('href')
-#         result += get_item_data(item_url)
-#         counter += 1
-#     return
 
 
 def get_list_data(page_url):
@@ -78,14 +65,14 @@ def get_list_data(page_url):
         print(full_url)
         result += get_item_data(full_url)
         counter += 1
-    return
+    return result
 
 
 def main(main_url, number_of_pages):
     r = requests.get(main_url)
     soup = BeautifulSoup(r.content)
     result = []
-    for i in range(1, number_of_pages+1):
+    for i in range(1, number_of_pages + 1):
         print('Parsing page ', str(i), ' of ', str(number_of_pages))
         page_url = main_url + '?page=' + str(i)
         print(page_url)
